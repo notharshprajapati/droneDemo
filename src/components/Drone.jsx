@@ -1,7 +1,8 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { easing } from "maath";
+import { useConfigurator } from "../contexts/Configurator";
 const HELIX_SPEED = 25;
 
 export function Drone(props) {
@@ -11,17 +12,19 @@ export function Drone(props) {
   const wing2 = useRef();
   const wing3 = useRef();
   const wing4 = useRef();
-  const ref = useRef(); //droneFlight
+  const camFollow = useRef(); //droneFlight
+  const { follow } = useConfigurator();
   const viewport = useThree((state) => state.viewport);
+
 
   useFrame((state, delta) => {
     const viewport = state.viewport.getCurrentViewport(state.camera, [0, 0, 0]);
 
     easing.damp3(
-      ref.current.position,
+      camFollow.current.position,
       [
-        (state.pointer.x * viewport.width) / 2,
-        (state.pointer.y * viewport.height) / 2,
+        ((!follow && state.pointer.x) * viewport.width) / 2,
+        !follow && 1.5 + (state.pointer.y * viewport.height) / 2,
         0,
       ],
       0.15,
@@ -43,8 +46,8 @@ export function Drone(props) {
         castShadow
         geometry={nodes.body.geometry}
         material={materials.body}
-        position={[0, 1.463, 0]}
-        ref={ref}
+        position={(follow && [0, 0, 0]) || (!follow && [0, 1.463, 0])}
+        ref={camFollow}
         {...props}
       >
         <mesh

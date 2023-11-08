@@ -25,3 +25,16 @@ html {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+.buttonDiv {
+  position: fixed;
+  top: 0;
+  display: flex;
+}
+.buttons {
+  margin: 5px;
+  font-size: 2rem;
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 10px;
+  color: white;
+}

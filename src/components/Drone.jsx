@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-const HELIX_SPEED = 20;
+import { easing } from "maath";
+const HELIX_SPEED = 25;
 
 export function Drone(props) {
   const { nodes, materials } = useGLTF("./models/drone.gltf");
@@ -10,8 +11,23 @@ export function Drone(props) {
   const wing2 = useRef();
   const wing3 = useRef();
   const wing4 = useRef();
-  // const ref = useRef(); //droneFlight
-  // const viewport = useThree((state) => state.viewport);
+  const ref = useRef(); //droneFlight
+  const viewport = useThree((state) => state.viewport);
+
+  useFrame((state, delta) => {
+    const viewport = state.viewport.getCurrentViewport(state.camera, [0, 0, 0]);
+
+    easing.damp3(
+      ref.current.position,
+      [
+        (state.pointer.x * viewport.width) / 2,
+        (state.pointer.y * viewport.height) / 2,
+        0,
+      ],
+      0.15,
+      delta
+    );
+  });
 
   useFrame((_state, delta) => {
     //wings
@@ -28,6 +44,8 @@ export function Drone(props) {
         geometry={nodes.body.geometry}
         material={materials.body}
         position={[0, 1.463, 0]}
+        ref={ref}
+        {...props}
       >
         <mesh
           geometry={nodes.battery.geometry}
@@ -106,88 +124,88 @@ export function Drone(props) {
           material={materials.wingWhite}
           position={[0, -0.016, -0.015]}
         />
-      </mesh>
-      <mesh
-        geometry={nodes.zRotate.geometry}
-        material={materials.hands}
-        position={[0, 1.399, 0.227]}
-      >
         <mesh
-          geometry={nodes.yRotate.geometry}
+          geometry={nodes.zRotate.geometry}
           material={materials.hands}
-          position={[0, -0.005, 0.003]}
+          position={[0, -0.06, 0.227]}
         >
           <mesh
-            geometry={nodes.Camera.geometry}
-            material={materials.Camera}
-            position={[0, 0, 0.007]}
+            geometry={nodes.yRotate.geometry}
+            material={materials.hands}
+            position={[0, -0.005, 0.003]}
           >
-            <group position={[0.014, 0, 0.021]}>
-              <mesh
-                geometry={nodes.Sphere.geometry}
-                material={materials["Camera Lens Black"]}
-              />
-              <mesh
-                geometry={nodes.Sphere_1.geometry}
-                material={materials["Camera lens glass"]}
-              />
-              <mesh
-                geometry={nodes.Sphere_2.geometry}
-                material={materials["Black Camera"]}
-              />
-            </group>
             <mesh
-              geometry={nodes.lensBoundry.geometry}
-              material={materials["Camera.001"]}
-              position={[0.014, 0, 0.021]}
-            />
-            <mesh
-              geometry={nodes.lensCover.geometry}
-              material={materials.Glass}
-              position={[0.014, 0, 0.026]}
-            />
+              geometry={nodes.Camera.geometry}
+              material={materials.Camera}
+              position={[0, 0, 0.007]}
+            >
+              <group position={[0.014, 0, 0.021]}>
+                <mesh
+                  geometry={nodes.Sphere.geometry}
+                  material={materials["Camera Lens Black"]}
+                />
+                <mesh
+                  geometry={nodes.Sphere_1.geometry}
+                  material={materials["Camera lens glass"]}
+                />
+                <mesh
+                  geometry={nodes.Sphere_2.geometry}
+                  material={materials["Black Camera"]}
+                />
+              </group>
+              <mesh
+                geometry={nodes.lensBoundry.geometry}
+                material={materials["Camera.001"]}
+                position={[0.014, 0, 0.021]}
+              />
+              <mesh
+                geometry={nodes.lensCover.geometry}
+                material={materials.Glass}
+                position={[0.014, 0, 0.026]}
+              />
+            </mesh>
           </mesh>
         </mesh>
-      </mesh>
-      <mesh
-        geometry={nodes.tpsCamZRotate.geometry}
-        material={materials["Metal Parts.001"]}
-        position={[0, 1.513, -0.233]}
-      >
         <mesh
-          geometry={nodes.tpsCamYRotate.geometry}
+          geometry={nodes.tpsCamZRotate.geometry}
           material={materials["Metal Parts.001"]}
-          position={[0, 0.005, 0.003]}
+          position={[0, 0.05, -0.233]}
         >
           <mesh
-            geometry={nodes.tpsCam.geometry}
-            material={materials.Camera}
-            position={[0, 0, 0.007]}
+            geometry={nodes.tpsCamYRotate.geometry}
+            material={materials["Metal Parts.001"]}
+            position={[0, 0.005, 0.003]}
           >
-            <group position={[-0.014, 0, 0.021]}>
-              <mesh
-                geometry={nodes.Sphere001.geometry}
-                material={materials["Camera Lens Black.001"]}
-              />
-              <mesh
-                geometry={nodes.Sphere001_1.geometry}
-                material={materials["Camera lens glass.001"]}
-              />
-              <mesh
-                geometry={nodes.Sphere001_2.geometry}
-                material={materials["Black Camera.001"]}
-              />
-            </group>
             <mesh
-              geometry={nodes.tpsCamLensBoundry.geometry}
+              geometry={nodes.tpsCam.geometry}
               material={materials.Camera}
-              position={[-0.014, 0, 0.021]}
-            />
-            <mesh
-              geometry={nodes.tpsCamLensCover.geometry}
-              material={materials["Glass.001"]}
-              position={[-0.014, 0, 0.026]}
-            />
+              position={[0, 0, 0.007]}
+            >
+              <group position={[-0.014, 0, 0.021]}>
+                <mesh
+                  geometry={nodes.Sphere001.geometry}
+                  material={materials["Camera Lens Black.001"]}
+                />
+                <mesh
+                  geometry={nodes.Sphere001_1.geometry}
+                  material={materials["Camera lens glass.001"]}
+                />
+                <mesh
+                  geometry={nodes.Sphere001_2.geometry}
+                  material={materials["Black Camera.001"]}
+                />
+              </group>
+              <mesh
+                geometry={nodes.tpsCamLensBoundry.geometry}
+                material={materials.Camera}
+                position={[-0.014, 0, 0.021]}
+              />
+              <mesh
+                geometry={nodes.tpsCamLensCover.geometry}
+                material={materials["Glass.001"]}
+                position={[-0.014, 0, 0.026]}
+              />
+            </mesh>
           </mesh>
         </mesh>
       </mesh>

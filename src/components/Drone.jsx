@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { easing } from "maath";
 import { useConfigurator } from "../contexts/Configurator";
 const HELIX_SPEED = 25;
@@ -14,30 +14,39 @@ export function Drone(props) {
   const wing4 = useRef();
   const camFollow = useRef(); //droneFlight
   const { follow } = useConfigurator();
-  const viewport = useThree((state) => state.viewport);
 
-
+  const [lastMouseX, setlastMouseX] = useState(0);
+  
   useFrame((state, delta) => {
     const viewport = state.viewport.getCurrentViewport(state.camera, [0, 0, 0]);
 
-    easing.damp3(
-      camFollow.current.position,
-      [
-        ((!follow && state.pointer.x) * viewport.width) / 2,
-        !follow && 1.5 + (state.pointer.y * viewport.height) / 2,
-        0,
-      ],
-      0.15,
-      delta
-    );
-  });
-
-  useFrame((_state, delta) => {
     //wings
     wing1.current.rotation.y += delta * HELIX_SPEED;
     wing2.current.rotation.y += delta * HELIX_SPEED;
     wing3.current.rotation.y += delta * HELIX_SPEED;
     wing4.current.rotation.y += delta * HELIX_SPEED;
+
+    // ---------- droneControl
+    // follow toggle
+    if (!follow) {
+      easing.damp3(
+        camFollow.current.position, // drone position
+        [
+          (state.pointer.x * viewport.width) / 2,
+          1.5 + (state.pointer.y * viewport.height) / 2,
+          0,
+        ],
+        0.15,
+        delta
+      );
+      easing.damp3(
+        camFollow.current.rotation, // drone rotation
+        [0, 0, -(state.pointer.x - lastMouseX) * viewport.width * 5],
+        0.15,
+        delta
+      );
+    }
+    setlastMouseX(state.pointer.x);
   });
 
   return (

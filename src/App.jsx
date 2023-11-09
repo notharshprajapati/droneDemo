@@ -1,23 +1,24 @@
 import { Canvas } from "@react-three/fiber";
 import { Experience } from "./components/Experience";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useConfigurator } from "./contexts/Configurator";
-import { colors } from "@mui/material";
 
 function App() {
   const { follow, setFollow } = useConfigurator();
 
   const cameraRef = useRef();
-  const [cameraPosition, setCameraPosition] = useState([0, 0, 5]);
+  const [cameraPosition, setCameraPosition] = useState([0, 0, 0]);
 
   const changeCameraPosition = () => {
-    setCameraPosition([0, 0, 10]);
+    console.log(cameraPosition);
+    setCameraPosition([10, 0, 0]);
   };
   return (
     <>
       <Canvas
         camera={{
           position: cameraPosition,
+          rotation: [0, 0, 0],
           fov: 50,
           ref: cameraRef,
         }}
@@ -38,7 +39,7 @@ function App() {
           className="buttons"
           onClick={(e) => setFollow(!follow)}
         >
-          followCam
+          followCursor
         </button>
       </div>
     </>

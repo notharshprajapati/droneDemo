@@ -1,6 +1,9 @@
 import { OrbitControls, Stage } from "@react-three/drei";
 import { Drone } from "./Drone";
+import { useConfigurator } from "../contexts/Configurator";
 export const Experience = () => {
+  const { follow } = useConfigurator();
+
   return (
     <>
       <Stage
@@ -16,11 +19,11 @@ export const Experience = () => {
       >
         <Drone />
       </Stage>
-
       <OrbitControls
+        enableRotate={follow}
+        enablePan={follow}
+        enableZoom={follow}
         makeDefault
-        // zoomToCursor={true}
-        enableZoom={false}
         minPolarAngle={0}
         maxPolarAngle={Math.PI / 2}
       />

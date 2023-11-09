@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 const ConfiguratorContext = createContext();
 export const ConfiguratorProvider = ({ children }) => {
-  const [follow, setFollow] = useState(false);
+  const [follow, setFollow] = useState(true);
   return (
     <ConfiguratorContext.Provider
       value={{
